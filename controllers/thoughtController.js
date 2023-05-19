@@ -1,7 +1,7 @@
 const { Thought, User } = require("../models");
 
 module.exports = {
-
+//method to featch all the thoughts in the database
   async getThoughts(req, res) {
     try {
       const thoughts = await Thought.find();
@@ -11,9 +11,12 @@ module.exports = {
     }
   },
 
+  //method to get a specific thought using the thought id posted in the request
   async getOneThought(req, res) {
     try {
       const thought = await Thought.findOne({ _id: req.params.thoughtId });
+
+      //if the thought id is not present in the database
       if (!thought) {
         return res
           .status(404)
@@ -25,7 +28,7 @@ module.exports = {
     }
   },
 
-
+//method to create a thought using the body posted in the request
   async createThought(req, res) {
     try {
       const thought = await Thought.create(req.body);
@@ -34,6 +37,8 @@ module.exports = {
         { $push: { thoughts: thought._id } },
         { new: true }
       );
+
+      // if the given user id in the request is not found in the database 
       if (!user) {
         return res
           .status(404)
@@ -46,6 +51,7 @@ module.exports = {
     }
   },
 
+  //method to update the thought using the posted thought id 
   async updateThought(req, res) {
     try {
       const thought = await Thought.findOneAndUpdate(
@@ -53,6 +59,8 @@ module.exports = {
         { $set: req.body },
         { runValidators: true, new: true }
       );
+
+      //if the thought id is not present in the database
       if (!thought) {
         return res.status(404).json({ message: "No thought with that ID" });
       }
@@ -62,22 +70,28 @@ module.exports = {
     }
   },
 
+  //method for deleting the thought using the given thought id
   async deleteThought(req, res) {
     try {
       const thought = await Thought.findOneAndRemove({
         _id: req.params.thoughtId,
       });
 
+      //if the given thought id is not present in the database
       if (!thought) {
         return res
           .status(404)
           .json({ message: "Can not find any thought with the ID" });
       }
+
+      //to delete the thought id in the user data thoughts array
       const user = await User.findOneAndUpdate(
         { thoughts: req.params.thoughtId },
         { $pull: { thoughts: req.params.thpughtId } },
         { new: true } 
       );
+
+      //if the given user id is not present in the database
       if (!user) {
         return res
           .status(404)
@@ -89,6 +103,7 @@ module.exports = {
     }
   },
 
+  //method to create the reacton in the thought data in reaction array
   async addReaction(req, res) {
     try {
       const thought = await Thought.findOneAndUpdate(
@@ -96,6 +111,8 @@ module.exports = {
         { $push: { reactions: req.body } },
         { runValidators: true, new: true }
       );
+
+      //if the given thought id is not present in the database
       if (!thought) {
         return res.status(404).json({ mesasage: "Can not find any thought with the ID" });
       }
@@ -105,6 +122,7 @@ module.exports = {
     }
   },
 
+  //method to delete the reaction from the thought array in the thought data
   async removeReaction(req, res) {
     try {
       const thought = await Thought.findOneAndUpdate(
@@ -113,6 +131,7 @@ module.exports = {
         { runValidators: true, new: true }
       );
 
+      //if the given thought id is not present in the database
       if (!thought) {
         return res.status(404).json({ message: "Can not find any thought with the ID" });
       }

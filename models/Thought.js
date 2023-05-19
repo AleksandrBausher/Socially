@@ -9,7 +9,7 @@ const thoughtSchema = new Schema(
     createdAt: {
       type: Date,
       default: Date.now,
-
+//using moment.js to format the date according to the needs
       get: (date) => {return moment(date).format("MM/DD/YYYY hh:mm:ss")}
     },
     username: {
@@ -17,6 +17,7 @@ const thoughtSchema = new Schema(
       type: String,
       required: true,
     },
+    //associating reaction using the defined reaction schema
     reactions: [reactionSchema],
   },
   {
@@ -27,11 +28,13 @@ const thoughtSchema = new Schema(
     id: false,
   }
 );
-//virtual to get number of reactions as this field is not in database
+
+//creating a virtual friendcount function to count the reactions associated to the thought
 thoughtSchema.virtual("reactionCount").get(function () {
     return `${this.reactions.length}`;
   });
 
+//converting the schema to model
   const Thought = model('thought', thoughtSchema);
 
   module.exports = Thought;

@@ -19,6 +19,7 @@ const reactionSchema = new Schema(
     createdAt: {
       type: Date,
       default: Date.now,
+      //formatting the date using the moment.js package
       get: (date) => {
         return moment(date).format("MM/DD/YYYY hh:mm:ss");
       },

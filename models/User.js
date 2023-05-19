@@ -8,7 +8,8 @@ const userSchema = new Schema(
       type: String,
       required: true,
       unique: true,
-      match: [//regex patters vaildaes email address
+      //regex to validate the email
+      match: [
         /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
         "Invalid emal address",
       ],
@@ -16,6 +17,7 @@ const userSchema = new Schema(
 
     thoughts: [
       {
+        //associating the thought
         type: Schema.Types.ObjectId,
         ref: "Thought",
       },
@@ -23,6 +25,7 @@ const userSchema = new Schema(
 
     friends: [
       {
+        //associating the friends
         type: Schema.Types.ObjectId,
         ref: "User",
       },
@@ -35,10 +38,13 @@ const userSchema = new Schema(
     id: false,
   }
 );
+
+//creating a virtual friendcount function to count the friends associated to the user
 userSchema.virtual("friendCount").get(function () {
   return `${this.friends.length}`;
 });
 
+//converting the schema to model
 const User = model("user", userSchema);
 
 module.exports = User;
